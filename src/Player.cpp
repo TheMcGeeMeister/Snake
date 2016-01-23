@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <Game.h>
 
 Player::Player()
 {
@@ -32,11 +33,11 @@ void Player::AddTail()
     switch(Direct)
     {
         case Up: NewPos.y=PosStart.y+1; NewPos.x=PosStart.x;
-                if(Test.isValidPosition(NewPos)==false) // Can't go down one
+                if(Game::display.isValidPosition(NewPos)==false) // Can't go down one
                 {
                     NewPos.y=PosStart.y;
                     NewPos.x=PosStart.x-1;
-                    if(Test.isValidPosition(NewPos)==false) // Can't go left, So go Right
+                    if(Game::display.isValidPosition(NewPos)==false) // Can't go left, So go Right
                     {
                         NewPos.y=PosStart.y;
                         NewPos.x=PosStart.x+1;
@@ -53,11 +54,11 @@ void Player::AddTail()
                     }
                 } break;
         case Down: NewPos.y=PosStart.y-1; NewPos.x=PosStart.x;
-                if(Test.isValidPosition(NewPos)==false) // Can't go up
+                if(Game::display.isValidPosition(NewPos)==false) // Can't go up
                 {
                     NewPos.y=PosStart.y; // Try Left
                     NewPos.x=PosStart.x-1;
-                    if(Test.isValidPosition(NewPos)==false) // Can't go left So Go Right
+                    if(Game::display.isValidPosition(NewPos)==false) // Can't go left So Go Right
                     {
                         NewPos.y=PosStart.y;
                         NewPos.x=PosStart.x+1;
@@ -74,11 +75,11 @@ void Player::AddTail()
                     }
                 } break;
         case Left: NewPos.y=PosStart.y; NewPos.x=PosStart.x+1;
-                if(Test.isValidPosition(NewPos)==false) // Can't go Right
+                if(Game::display.isValidPosition(NewPos)==false) // Can't go Right
                 {
                     NewPos.y=PosStart.y-1; // Try Up
                     NewPos.x=PosStart.x;
-                    if(Test.isValidPosition(NewPos)==false) // Can't go up, so go down
+                    if(Game::display.isValidPosition(NewPos)==false) // Can't go up, so go down
                     {
                         NewPos.y=PosStart.y+1;
                         NewPos.x=PosStart.x;
@@ -95,11 +96,11 @@ void Player::AddTail()
                     }
                 } break;
         case Right: NewPos.y=PosStart.y; NewPos.x=PosStart.x-1;
-                if(Test.isValidPosition(NewPos)==false) // Can't go Left
+                if(Game::display.isValidPosition(NewPos)==false) // Can't go Left
                 {
                     NewPos.y=PosStart.y-1; // Try Up
                     NewPos.x=PosStart.x;
-                    if(Test.isValidPosition(NewPos)==false) // Can't go up, so go down
+                    if(Game::display.isValidPosition(NewPos)==false) // Can't go up, so go down
                     {
                         NewPos.y=PosStart.y+1;
                         NewPos.x=PosStart.x;
@@ -118,16 +119,16 @@ void Player::AddTail()
     }
     NewTail.SetTailPos(NewPos);
     NewTail.SetTailDirect(Direct);
-    Test.SetPos(NewPos, snakeGraphic_);
+    Game::display.SetPos(NewPos, snakeGraphic_);
     tails.push_back(NewTail);
     return;
 }
 
 void Player::SetPlayerPos(Position pos)
 {
-    Test.SetPos(pos, ' ');
+	Game::display .SetPos(pos, ' ');
     this->pos=pos;
-    Test.SetPos(pos, 'A');
+    Game::display.SetPos(pos, 'A');
 }
 
 void Player::SetPlayerDirect(Direction direct)
@@ -195,7 +196,7 @@ void Player::resetTail()
 void Player::Move()
 {
     char nothing=' ';
-    Test.SetPos(pos, nothing);
+	Game::display .SetPos(pos, nothing);
     switch(direct)
     {
         case Up: pos.y--; MovementCoolDown.StartNewTimer(movementCooldown_*2); break;
@@ -203,16 +204,16 @@ void Player::Move()
         case Left: pos.x--; MovementCoolDown.StartNewTimer(movementCooldown_); break;
         case Right: pos.x++; MovementCoolDown.StartNewTimer(movementCooldown_); break;
     }
-    if(Test.GetPos(pos)=='@')
+    if(Game::display.GetPos(pos)=='@')
     {
         spawnApple();
         ateApple=true;
     }
-    else if(Test.GetPos(pos)==snakeGraphic_)
+    else if(Game::display.GetPos(pos)==snakeGraphic_)
     {
         gameOver();
     }
-    Test.SetPos(pos, 'A');
+    Game::display.SetPos(pos, 'A');
     return;
 }
 
@@ -224,19 +225,19 @@ bool Player::isCollision(Direction direction)
     {
         case Up:
             NewPosition.y--;
-            graphicAtNewPos=Test.GetPos(pos);
+            graphicAtNewPos=Game::display.GetPos(pos);
             if(graphicAtNewPos==snakeGraphic_){return true;}{return false;}
         case Down:
             NewPosition.y++;
-            graphicAtNewPos=Test.GetPos(pos);
+            graphicAtNewPos=Game::display.GetPos(pos);
             if(graphicAtNewPos==snakeGraphic_){return true;}{return false;}
         case Left:
             NewPosition.x--;
-            graphicAtNewPos=Test.GetPos(pos);
+            graphicAtNewPos=Game::display.GetPos(pos);
             if(graphicAtNewPos==snakeGraphic_){return true;}{return false;}
         case Right:
             NewPosition.x++;
-            graphicAtNewPos=Test.GetPos(pos);
+            graphicAtNewPos=Game::display.GetPos(pos);
             if(graphicAtNewPos==snakeGraphic_){return true;}{return false;}
         default:
             return true;
@@ -253,10 +254,10 @@ bool Player::CanMove()
     }
     switch(direct)
     {
-        case Up: newPos.y--; if(Test.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Down: newPos.y++; if(Test.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Left: newPos.x--; if(Test.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Right: newPos.x++; if(Test.isValidPosition(newPos)){return true;}else{return false;} break;
+        case Up: newPos.y--; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
+        case Down: newPos.y++; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
+        case Left: newPos.x--; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
+        case Right: newPos.x++; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
     }
     if(isCollision(direct))
 
@@ -276,10 +277,10 @@ bool Player::CanMoveCertainDirection(Direction direct)
     }
     switch(direct)
     {
-        case Up: newPos.y--; if(Test.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Down: newPos.y++; if(Test.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Left: newPos.x--; if(Test.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Right: newPos.x++; if(Test.isValidPosition(newPos)){return true;}else{return false;} break;
+        case Up: newPos.y--; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
+        case Down: newPos.y++; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
+        case Left: newPos.x--; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
+        case Right: newPos.x++; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
     }
     return true;
 }
@@ -362,7 +363,7 @@ void Tail::AddTurn(pair<Direction, Position> NewTurn)
 
 void Tail::Move()
 {
-    Test.SetPos(pos, ' ');
+    Game::display.SetPos(pos, ' ');
     switch(direct)
     {
         case Up: pos.y--; break;
@@ -370,7 +371,7 @@ void Tail::Move()
         case Left: pos.x--; break;
         case Right: pos.x++; break;
     }
-    Test.SetPos(pos, 'S');
+    Game::display.SetPos(pos, 'S');
 }
 
 void Tail::Update()

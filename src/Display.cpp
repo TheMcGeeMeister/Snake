@@ -20,6 +20,11 @@ Display::Display(int size_y, int size_x, int start_y, int start_x)
     start_x_=start_x;
 }
 
+Display::Display()
+{
+	
+}
+
 Display::~Display()
 {
     //dtor

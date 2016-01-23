@@ -1,2 +1,4 @@
 projects/
 bin/
+bin/Debug/
+bin/Release/

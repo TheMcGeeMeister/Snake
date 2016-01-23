@@ -30,6 +30,7 @@ class Display
     public:
         Display(int size_y, int size_x);
         Display(int size_y, int size_x, int start_y, int start_x);
+		Display();
         virtual ~Display();
         void Update();
         void DrawBorder();

@@ -5,10 +5,10 @@
 #include <Direction.h>
 #include <Vector>
 #include <Display.h>
+#include <Game.h>
 
 using namespace std;
 
-extern Display Test;
 extern void gameOver();
 extern void spawnApple();
 

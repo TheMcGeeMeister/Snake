@@ -1,10 +1,11 @@
 #include <iostream>
-#include <Display.h>
 #include <Timer.h>
-#include <Player.h>
 #include <random>
 #include <conio.h>
 #include <thread>
+#include <Game.h>
+#include <Display.h>
+#include <Player.h>
 
 using namespace std;
 
@@ -12,22 +13,22 @@ void spawnMultipleApples(int spawn_amount);
 void clearScreen();
 void clearScreen(int lines, int width);
 
-Display Test(5, 10, 1, 1);
+
 Timer MovementCoolDown;
 Direction CurMove;
 Position applePosition;
 Timer InputCoolDown;
 double CoolDownTime=0.04;
-bool ateSelfYaDumb=false;
+bool playerAteSelf=false;
 bool gameExit=false;
+
+Timer SpeedCoolDown;
 
 namespace Game
 {
-	Display& display = Test;
+	Display display(10, 10, 0, 0);
 	Player player;
 }
-
-Timer SpeedCoolDown;
 
 void SetPos(Position _pos, char _graphic)
 {
@@ -43,7 +44,7 @@ void SetPos(Position _pos, char _graphic)
 
 void gameOver()
 {
-    ateSelfYaDumb=true;
+    playerAteSelf=true;
 }
 
 void CursorPos(short int y, short int x)
@@ -58,27 +59,7 @@ Position Make_Pos(int y, int x)
     return Position(y,x);
 }
 
-void SpeedTime() // No Affect Atm
-{
-    if(SpeedCoolDown.Update()==false)
-    {
-        return;
-    }
-    CoolDownTime+=0.1;
-    SpeedCoolDown.StartNewTimer(1.00);
-}
-
-void SlowTime() // No Affect Atm
-{
-    if(SpeedCoolDown.Update()==false)
-    {
-        return;
-    }
-    CoolDownTime-=0.01;
-    SpeedCoolDown.StartNewTimer(1.00);
-}
-
-void TestInput()
+void Logic()
 {
     if(GetAsyncKeyState('W'))
     {
@@ -150,8 +131,8 @@ void appleUpdate();
 
 void spawnApple()
 {
-    applePosition.x=(rand() % (Test.GetMaxSizeX()+1))+Test.getStartPositionX();
-    applePosition.y=(rand() % (Test.GetMaxSizeY()+1))+Test.getStartPositionY();
+    applePosition.x=(rand() % (Game::display.GetMaxSizeX()+1))+Game::display.getStartPositionX();
+    applePosition.y=(rand() % (Game::display.GetMaxSizeY()+1))+Game::display.getStartPositionY();
     appleUpdate();
 }
 
@@ -159,15 +140,15 @@ void spawnMultipleApples(int spawn_amount)
 {
     for(int x=0;x<spawn_amount;x++)
     {
-        applePosition.x=(rand() % (Test.GetMaxSizeX()+1))+Test.getStartPositionX();
-        applePosition.y=(rand() % (Test.GetMaxSizeY()+1))+Test.getStartPositionY();
+        applePosition.x=(rand() % (Game::display.GetMaxSizeX()+1))+Game::display.getStartPositionX();
+        applePosition.y=(rand() % (Game::display.GetMaxSizeY()+1))+Game::display.getStartPositionY();
         appleUpdate();
     }
 }
 
 void appleUpdate()
 {
-    Test.SetPos(applePosition, '@');
+    Game::display.SetPos(applePosition, '@');
 }
 
 void gameLoop()
@@ -177,16 +158,16 @@ void gameLoop()
     spawnApple();
     Game::display.clearDisplay();
     Game::display.DrawBorder();
-    while(isExit()==false && ateSelfYaDumb==false)
+    while(isExit()==false && playerAteSelf==false)
     {
-        TestInput();
+        Logic();
         Game::player.Update();
         Game::display.Update();
         appleUpdate();
         Sleep(1);
     }
     Game::player.resetTail();
-    ateSelfYaDumb=false;
+    playerAteSelf=false;
     return;
 }
 
@@ -239,24 +220,12 @@ void startGame()
                 InputCoolDown.StartNewTimer(0.2);
             }
         }
-        /*if(selection==0)
-        {
-            clearScreen(2, 15);
-            CursorPos(0,0);
-            cout<<"1.Start Game<-"<<endl
-                <<"2.Exit Game"<<endl;
-        }else
-        {
-            clearScreen(2, 15);
-            CursorPos(0,0);
-            cout<<"1.Start Game"<<endl
-                <<"2.Exit Game<-"<<endl;
-        }*/
+
         Sleep(1);
     }
 }
 
-void clearScreen()
+void clearScreen() // Not reccomended takes a lot of time to clear this much
 {
     Position pos;
     for(int y=0;y<=300;y++)
@@ -270,7 +239,7 @@ void clearScreen()
     }
 }
 
-void clearScreen(int lines, int width)
+void clearScreen(int lines, int width) // Pick the amount of lines, and the width of them to be cleared
 {
     Position pos;
     for(int y=0;y<=lines;y++)
@@ -288,27 +257,9 @@ int main()
 {
     srand(time(NULL));
 
-    CursorPos((Test.GetMaxSizeX()+Test.getStartPositionX())+2, 0);
+    CursorPos((Game::display.GetMaxSizeX()+Game::display.getStartPositionX())+2, 0);
 
     startGame();
-    /*while(isExit()==false && ateSelfYaDumb==false)
-    {
-        TestInput();
-        Player.Update();
-        Test.Update();
-        appleUpdate();
-        Sleep(1);
-    }*/
-    /*clearScreen();
-    cout<<"<<Dev Mode Initialized>>"<<endl;
-    Network Client;
-    Client.StartClient("24.100.184.220");
-    Client.CloseClientConnection();
-    cout<<"Error:"<<Client.isError()<<endl;
-    cout<<Client.getLastError()<<endl;
-    cout<<false<<endl;
-    gameExit=true;
-    Sleep(1000);
-    cin.get();*/
+
     return 0;
 }
