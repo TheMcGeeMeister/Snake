@@ -1,11 +1,10 @@
 #ifndef PLAYER_H
 #define PLAYER_H
+#include <Game.h>
 #include <Position.h>
 #include <Timer.h>
 #include <Direction.h>
 #include <Vector>
-#include <Display.h>
-#include <Game.h>
 
 using namespace std;
 

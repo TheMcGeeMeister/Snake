@@ -4,8 +4,6 @@
 #include <conio.h>
 #include <thread>
 #include <Game.h>
-#include <Display.h>
-#include <Player.h>
 
 using namespace std;
 
