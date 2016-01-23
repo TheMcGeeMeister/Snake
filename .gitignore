@@ -1,8 +1,2 @@
-*.vcxproj
-
-projects\*.*
-*.sdf
-projects/Snake.v12.suo
-*.sln
-*.filters
-*.opensdf
+projects/
+bin/
