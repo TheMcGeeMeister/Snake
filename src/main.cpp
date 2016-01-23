@@ -5,7 +5,6 @@
 #include <random>
 #include <conio.h>
 #include <thread>
-#include <Network.h>
 
 using namespace std;
 
@@ -16,7 +15,6 @@ void clearScreen(int lines, int width);
 Display Test(5, 10, 1, 1);
 Timer MovementCoolDown;
 Direction CurMove;
-Player Player;
 Position applePosition;
 Timer InputCoolDown;
 double CoolDownTime=0.04;
@@ -25,7 +23,8 @@ bool gameExit=false;
 
 namespace Game
 {
-
+	Display& display = Test;
+	Player player;
 }
 
 Timer SpeedCoolDown;
@@ -83,37 +82,37 @@ void TestInput()
 {
     if(GetAsyncKeyState('W'))
     {
-        if(Player.CanChangeDirect(Up)==true && Player.CanMoveCertainDirection(Up))
+        if(Game::player.CanChangeDirect(Up)==true && Game::player.CanMoveCertainDirection(Up))
         {
-            Player.SetPlayerDirect(Up);
-            Player.AddTurnPoint(Up);
+            Game::player.SetPlayerDirect(Up);
+            Game::player.AddTurnPoint(Up);
             InputCoolDown.StartNewTimer(0.2);
         }
     }
-    else if(GetAsyncKeyState('S') && Player.CanMoveCertainDirection(Down))
+    else if(GetAsyncKeyState('S') && Game::player.CanMoveCertainDirection(Down))
     {
-        if(Player.CanChangeDirect(Down)==true)
+        if(Game::player.CanChangeDirect(Down)==true)
         {
-            Player.SetPlayerDirect(Down);
-            Player.AddTurnPoint(Down);
+            Game::player.SetPlayerDirect(Down);
+            Game::player.AddTurnPoint(Down);
             InputCoolDown.StartNewTimer(0.2);
         }
     }
-    else if(GetAsyncKeyState('A') && Player.CanMoveCertainDirection(Left))
+	else if (GetAsyncKeyState('A') && Game::player.CanMoveCertainDirection(Left))
     {
-        if(Player.CanChangeDirect(Left)==true)
+		if (Game::player.CanChangeDirect(Left) == true)
         {
-            Player.SetPlayerDirect(Left);
-            Player.AddTurnPoint(Left);
+            Game::player.SetPlayerDirect(Left);
+            Game::player.AddTurnPoint(Left);
             InputCoolDown.StartNewTimer(0.2);
         }
     }
-    else if(GetAsyncKeyState('D') && Player.CanMoveCertainDirection(Right))
+    else if(GetAsyncKeyState('D') && Game::player.CanMoveCertainDirection(Right))
     {
-        if(Player.CanChangeDirect(Right)==true && Player.CanMoveCertainDirection(Right))
+        if(Game::player.CanChangeDirect(Right)==true && Game::player.CanMoveCertainDirection(Right))
         {
-            Player.SetPlayerDirect(Right);
-            Player.AddTurnPoint(Right);
+            Game::player.SetPlayerDirect(Right);
+            Game::player.AddTurnPoint(Right);
             InputCoolDown.StartNewTimer(0.2);
         }
     }
@@ -123,7 +122,7 @@ void TestInput()
         {
             return;
         }
-        Player.AddTail();
+        Game::player.AddTail();
         InputCoolDown.StartNewTimer(0.2);
     }
     if(GetAsyncKeyState('Y'))
@@ -132,43 +131,6 @@ void TestInput()
         {
             spawnMultipleApples(3);
         }
-    }
-    return;
-}
-
-void logic() // Not in-use TODO:Fix this shit. Even though idk why it's broken
-{
-    while(ateSelfYaDumb==false && gameExit==false)
-    {
-        char input=getch();
-        switch(input)
-        {
-            case 'w':
-                if(Player.CanChangeDirect(Up)==true && Player.CanMoveCertainDirection(Up))
-                {
-                    Player.SetPlayerDirect(Up);
-                    Player.AddTurnPoint(Up);
-                } break;
-            case 's':
-                if(Player.CanChangeDirect(Down)==true && Player.CanMoveCertainDirection(Down))
-                {
-                    Player.SetPlayerDirect(Down);
-                    Player.AddTurnPoint(Down);
-                } break;
-            case 'a':
-                if(Player.CanChangeDirect(Left)==true && Player.CanMoveCertainDirection(Left))
-                {
-                    Player.SetPlayerDirect(Left);
-                    Player.AddTurnPoint(Left);
-                } break;
-            case 'd':
-                if(Player.CanChangeDirect(Right)==true && Player.CanMoveCertainDirection(Right))
-                {
-                    Player.SetPlayerDirect(Right);
-                    Player.AddTurnPoint(Right);
-                } break;
-        }
-        CursorPos(43,0);
     }
     return;
 }
@@ -211,19 +173,19 @@ void appleUpdate()
 void gameLoop()
 {
     Position pos(2,2);
-    Player.SetPlayerPos(pos);
+    Game::player.SetPlayerPos(pos);
     spawnApple();
-    Test.clearDisplay();
-    Test.DrawBorder();
+    Game::display.clearDisplay();
+    Game::display.DrawBorder();
     while(isExit()==false && ateSelfYaDumb==false)
     {
         TestInput();
-        Player.Update();
-        Test.Update();
+        Game::player.Update();
+        Game::display.Update();
         appleUpdate();
         Sleep(1);
     }
-    Player.resetTail();
+    Game::player.resetTail();
     ateSelfYaDumb=false;
     return;
 }
