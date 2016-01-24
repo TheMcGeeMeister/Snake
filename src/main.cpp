@@ -300,7 +300,7 @@ void appleUpdate()
 
 void gameLoop()
 {
-    Position pos(Game::display.getOffSetPositionY()+1, Game::display.getOffSetPositionX());
+    Position pos(Game::display.getOffSetPositionY()+1, Game::display.getOffSetPositionX()+1);
     Game::player.SetPlayerPos(pos);
     spawnApple();
     Game::display.clearDisplay();
