@@ -418,11 +418,7 @@ void clearScreen() // Not reccomended takes a lot of time to clear this much
     for(int y=0;y<=300;y++)
     {
         pos.y=y;
-        for(int x=0;x<=300;x++)
-        {
-            pos.x=x;
-            SetPos(pos, ' ');
-        }
+		FillLine(y, 300);
     }
 }
 
@@ -443,6 +439,14 @@ void clearScreen(unsigned int lines, unsigned int width) // Pick the amount of l
 
 int main()
 {
+	CONSOLE_CURSOR_INFO cursorInfo;
+	cursorInfo.bVisible = false;
+	cursorInfo.dwSize = 1;
+
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	GetConsoleCursorInfo(h, &cursorInfo);
+
     srand(time(NULL));
 
     CursorPos((Game::display.GetMaxSizeX()+Game::display.getStartPositionX())+2, 0);
