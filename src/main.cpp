@@ -179,6 +179,7 @@ void startGame()
     Timer InputCoolDown;
 	int selection = 0;
 	int selectionMax = 2;
+	int prevSelection = 10;
     CursorPos(0,0);
     while(true)
     {
@@ -221,28 +222,33 @@ void startGame()
             }
         }
 
-		clearScreen(3, 20);
-		CursorPos(0, 0);
-
-		switch (selection)
+		if (prevSelection != selection)
 		{
-		case 0:
-			cout << "1.Start Game <-" << endl
-				<< "2.Settings" << endl
-				<< "3.Exit";
-			break;
-		case 1:
-			cout << "1.Start Game" << endl
-				<< "2.Settings <-" << endl
-				<< "3.Exit";
-			break;
-		case 2:
-			cout << "1.Start Game" << endl
-				<< "2.Settings" << endl
-				<< "3.Exit <-";
-			break;
-		default:
-			return;
+			clearScreen(3, 20);
+			CursorPos(0, 0);
+			switch (selection)
+			{
+			case 0:
+				cout << "1.Start Game <-" << endl
+					<< "2.Settings" << endl
+					<< "3.Exit";
+				prevSelection = 0;
+				break;
+			case 1:
+				cout << "1.Start Game" << endl
+					<< "2.Settings <-" << endl
+					<< "3.Exit";
+				prevSelection = 1;
+				break;
+			case 2:
+				cout << "1.Start Game" << endl
+					<< "2.Settings" << endl
+					<< "3.Exit <-";
+				prevSelection = 2;
+				break;
+			default:
+				return;
+			}
 		}
 
         Sleep(1);
