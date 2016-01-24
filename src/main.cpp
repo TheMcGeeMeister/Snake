@@ -10,7 +10,7 @@ using namespace std;
 
 void spawnMultipleApples(int spawn_amount);
 void clearScreen();
-void clearScreen(int lines, int width);
+void clearScreen(unsigned int lines, unsigned int width);
 
 
 Timer MovementCoolDown;
@@ -53,6 +53,18 @@ void CursorPos(short int y, short int x)
     SetConsoleCursorPosition(h, pos);
 }
 
+void FillLine(int line, int width)
+{
+	COORD pos;
+	pos.X = 0;
+	pos.Y = line;
+	DWORD nlength = width;
+	DWORD output;
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+	TCHAR graphic = ' ';
+	FillConsoleOutputCharacter(h, graphic, nlength, pos, &output);
+}
+
 Position Make_Pos(int y, int x)
 {
     return Position(y,x);
@@ -60,58 +72,55 @@ Position Make_Pos(int y, int x)
 
 void Logic()
 {
-    if(GetAsyncKeyState('W'))
-    {
-        if(Game::player.CanChangeDirect(Up)==true && Game::player.CanMoveCertainDirection(Up))
-        {
-            Game::player.SetPlayerDirect(Up);
-            Game::player.AddTurnPoint(Up);
-            InputCoolDown.StartNewTimer(0.2);
-        }
-    }
-    else if(GetAsyncKeyState('S') && Game::player.CanMoveCertainDirection(Down))
-    {
-        if(Game::player.CanChangeDirect(Down)==true)
-        {
-            Game::player.SetPlayerDirect(Down);
-            Game::player.AddTurnPoint(Down);
-            InputCoolDown.StartNewTimer(0.2);
-        }
-    }
-	else if (GetAsyncKeyState('A') && Game::player.CanMoveCertainDirection(Left))
-    {
-		if (Game::player.CanChangeDirect(Left) == true)
-        {
-            Game::player.SetPlayerDirect(Left);
-            Game::player.AddTurnPoint(Left);
-            InputCoolDown.StartNewTimer(0.2);
-        }
-    }
-    else if(GetAsyncKeyState('D') && Game::player.CanMoveCertainDirection(Right))
-    {
-        if(Game::player.CanChangeDirect(Right)==true && Game::player.CanMoveCertainDirection(Right))
-        {
-            Game::player.SetPlayerDirect(Right);
-            Game::player.AddTurnPoint(Right);
-            InputCoolDown.StartNewTimer(0.2);
-        }
-    }
-    if(GetAsyncKeyState('T'))
-    {
-        if(InputCoolDown.Update()==false)
-        {
-            return;
-        }
-        Game::player.AddTail();
-        InputCoolDown.StartNewTimer(0.2);
-    }
-    if(GetAsyncKeyState('Y'))
-    {
-        if(InputCoolDown.Update()==false)
-        {
-            spawnMultipleApples(3);
-        }
-    }
+	if (InputCoolDown.Update() == true)
+	{
+		if (GetAsyncKeyState('W'))
+		{
+			if (Game::player.CanChangeDirect(Up) == true && Game::player.CanMoveCertainDirection(Up))
+			{
+				Game::player.SetPlayerDirect(Up);
+				Game::player.AddTurnPoint(Up);
+				InputCoolDown.StartNewTimer(0.05);
+			}
+		}
+		else if (GetAsyncKeyState('S'))
+		{
+			if (Game::player.CanChangeDirect(Down) == true && Game::player.CanMoveCertainDirection(Down))
+			{
+				Game::player.SetPlayerDirect(Down);
+				Game::player.AddTurnPoint(Down);
+				InputCoolDown.StartNewTimer(0.05);
+			}
+		}
+		else if (GetAsyncKeyState('A'))
+		{
+			if (Game::player.CanChangeDirect(Left) == true && Game::player.CanMoveCertainDirection(Left))
+			{
+				Game::player.SetPlayerDirect(Left);
+				Game::player.AddTurnPoint(Left);
+				InputCoolDown.StartNewTimer(0.05);
+			}
+		}
+		else if (GetAsyncKeyState('D'))
+		{
+			if (Game::player.CanChangeDirect(Right) == true && Game::player.CanMoveCertainDirection(Right))
+			{
+				Game::player.SetPlayerDirect(Right);
+				Game::player.AddTurnPoint(Right);
+				InputCoolDown.StartNewTimer(0.05);
+			}
+		}
+		if (GetAsyncKeyState('T'))
+		{
+			Game::player.AddTail();
+			InputCoolDown.StartNewTimer(0.1);
+		}
+		if (GetAsyncKeyState('Y'))
+		{
+			spawnMultipleApples(3);
+			InputCoolDown.StartNewTimer(0.1);
+		}
+	}
     return;
 }
 
@@ -357,7 +366,7 @@ void mainMenu()
                 {
                     clearScreen(3,20);
                     gameLoop();
-                    clearScreen(Game::display.GetMaxSizeY()+Game::display.getOffSetPositionY()+2, Game::display.GetMaxSizeX()+Game::display.getOffSetPositionX()+2); // Adds the max width, plus offset, +2 for the borders.
+                    clearScreen((unsigned int)Game::display.GetMaxSizeY()+Game::display.getOffSetPositionY()+2, (unsigned int)Game::display.GetMaxSizeX()+Game::display.getOffSetPositionX()+2); // Adds the max width, plus offset, +2 for the borders.
                     CursorPos(0,0);
 					reDraw = true;
 				} else if (selection==1)
@@ -417,17 +426,18 @@ void clearScreen() // Not reccomended takes a lot of time to clear this much
     }
 }
 
-void clearScreen(int lines, int width) // Pick the amount of lines, and the width of them to be cleared
+void clearScreen(unsigned int lines, unsigned int width) // Pick the amount of lines, and the width of them to be cleared
 {
     Position pos;
-    for(int y=0;y<=lines;y++)
+    for(unsigned int y=0;y<=lines;y++)
     {
         pos.y=y;
-        for(int x=0;x<=width;x++)
+		FillLine(y, width);
+        /*for(int x=0;x<=width;x++) FillLine may actually be more efficent
         {
             pos.x=x;
             SetPos(pos, ' ');
-        }
+        }*/
     }
 }
 
