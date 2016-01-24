@@ -28,8 +28,8 @@ class display_change
 class Display
 {
     public:
-        Display(int size_y, int size_x);
-        Display(int size_y, int size_x, int start_y, int start_x);
+        Display(unsigned int size_y, unsigned int size_x);
+        Display(unsigned int size_y, unsigned int size_x, unsigned int offset_y, unsigned int offset_x);
 		Display();
         virtual ~Display();
         void Update();
@@ -41,18 +41,22 @@ class Display
         void setSizeX(int);
         void setStartPositionX(int);
         void setStartPositionY(int);
+		void setOffSetPositionX(int);
+		void setOffSetPositionY(int);
         bool isValidPosition(Position);
         int GetMaxSizeY();
         int GetMaxSizeX();
         int getStartPositionX();
         int getStartPositionY();
+		unsigned int getOffSetPositionX();
+		unsigned int getOffSetPositionY();
         char GetPos(Position);
     private:
         map<pair<int,int>, char> GameMap;
         vector<display_change> MapChangesBuffer;
         HANDLE h;
-        int size_y, size_x;
-        int start_y_, start_x_;
+        unsigned int size_y, size_x;
+        unsigned int offset_y_, offset_x_;
         DWORD nlength;
         DWORD output;
         COORD pos;

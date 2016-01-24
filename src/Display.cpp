@@ -1,28 +1,33 @@
 #include "Display.h"
 
-Display::Display(int size_y, int size_x)
+Display::Display(unsigned int size_y, unsigned int size_x)
 {
     nlength=1;
     h=GetStdHandle(STD_OUTPUT_HANDLE);
     this->size_x=size_x;
     this->size_y=size_y;
-    start_x_=1;
-    start_y_=1;
+    offset_x_=1;
+    offset_y_=1;
 }
 
-Display::Display(int size_y, int size_x, int start_y, int start_x)
+Display::Display(unsigned int size_y, unsigned int size_x, unsigned int offset_y, unsigned int offset_x)
 {
     nlength=1;
     h=GetStdHandle(STD_OUTPUT_HANDLE);
     this->size_x=size_x;
     this->size_y=size_y;
-    start_y_=start_y;
-    start_x_=start_x;
+	offset_y_ = offset_y;
+	offset_x_ = offset_x;
 }
 
 Display::Display()
 {
-	
+	nlength = 1;
+	h = GetStdHandle(STD_OUTPUT_HANDLE);
+	size_x = 10;
+	size_y = 5;
+	offset_y_ = 1;
+	offset_x_ = 1;
 }
 
 Display::~Display()
@@ -32,16 +37,16 @@ Display::~Display()
 
 bool Display::isValidPosition(Position position)
 {
-    if(position.x<start_x_)
+    if(position.x<offset_x_)
     {
         return false;
-    }else if(position.x>(start_x_+size_x))
+    }else if(position.x>(offset_x_+size_x))
     {
         return false;
-    }else if(position.y<start_y_)
+    }else if(position.y<offset_y_)
     {
         return false;
-    }else if(position.y>(start_y_+size_y))
+    }else if(position.y>(offset_y_+size_y))
     {
         return false;
     }else
@@ -53,26 +58,26 @@ bool Display::isValidPosition(Position position)
 void Display::DrawBorder()
 {
     Position position;
-    position.x=start_x_-1;
-    for(int y=start_y_-1;y<=(size_y+start_y_+1);y++) // Left Border
+    position.x=offset_x_-1;
+    for(int y=offset_y_-1;y<=(size_y+offset_y_+1);y++) // Left Border
     {
         position.y=y;
         SetPos(position, '#');
     }
-    position.x=(start_x_+size_x+1);
-    for(int y=(start_y_-1);y<=(size_y+start_y_+1);y++) // Right Border
+    position.x=(offset_x_+size_x+1);
+    for(int y=(offset_y_-1);y<=(size_y+offset_y_+1);y++) // Right Border
     {
         position.y=y;
         SetPos(position, '#');
     }
-    position.y=start_y_-1;
-    for(int x=(start_x_)-1;x<=(size_x+start_x_+1);x++) // Top Border
+    position.y=offset_y_-1;
+    for(int x=(offset_x_)-1;x<=(size_x+offset_x_+1);x++) // Top Border
     {
         position.x=x;
         SetPos(position, '#');
     }
-    position.y=(start_y_+size_y+1);
-    for(int x=(start_x_-1);x<=(size_x+start_x_+1);x++) // Bottom Border
+    position.y=(offset_y_+size_y+1);
+    for(int x=(offset_x_-1);x<=(size_x+offset_x_+1);x++) // Bottom Border
     {
         position.x=x;
         SetPos(position, '#');
@@ -97,12 +102,22 @@ void Display::SetPosAttribute(Position pos, DWORD attribute)
 
 void Display::setStartPositionX(int _x)
 {
-    start_x_=_x;
+    offset_x_=_x;
 }
 
 void Display::setStartPositionY(int _y)
 {
-    start_y_=_y;
+    offset_y_=_y;
+}
+
+void Display::setOffSetPositionX(int _x)
+{
+	offset_x_ = _x;
+}
+
+void Display::setOffSetPositionY(int _y)
+{
+	offset_y_ = _y;
 }
 
 void Display::setSizeY(int _in_y)
@@ -134,7 +149,7 @@ void Display::Update()
             WriteConsoleOutputCharacter(h, &graphic, nlength, pos, &output);
         }else
         {
-            const WORD attribute=iter->GetChangeAttribute();
+            const WORD attribute=(const WORD)iter->GetChangeAttribute();
             CurrentPosition=iter->GetChangePos();
             pos.X=CurrentPosition.x;
             pos.Y=CurrentPosition.y;
@@ -162,12 +177,22 @@ int Display::GetMaxSizeX()
 
 int Display::getStartPositionX()
 {
-    return start_x_;
+    return offset_x_;
 }
 
 int Display::getStartPositionY()
 {
-    return start_y_;
+    return offset_y_;
+}
+
+unsigned int Display::getOffSetPositionX()
+{
+	return offset_y_;
+}
+
+unsigned int Display::getOffSetPositionY()
+{
+	return offset_y_;
 }
 
 char Display::GetPos(Position position)

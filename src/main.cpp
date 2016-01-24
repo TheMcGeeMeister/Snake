@@ -4,6 +4,7 @@
 #include <conio.h>
 #include <thread>
 #include <Game.h>
+#include <sstream>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ Timer SpeedCoolDown;
 
 namespace Game
 {
-	Display display(10, 10, 0, 0);
+	Display display(5, 10, 1, 1);
 	Player player;
 }
 
@@ -127,7 +128,150 @@ bool isExit()
 
 void selectionChangeMapSize()
 {
-	
+	Timer InputCoolDown;
+	int selection = 0;
+	int selectionMax = 4;
+
+	int max_y = Game::display.GetMaxSizeY();
+	int max_x = Game::display.GetMaxSizeX();
+	int offset_y = Game::display.getOffSetPositionY();
+	int offset_x = Game::display.getOffSetPositionX();
+
+	bool exit = false;
+	bool reDraw = true;
+
+	while (exit==false)
+	{
+		if (GetAsyncKeyState('W'))
+		{
+			if (InputCoolDown.Update() == true)
+			{
+				selection == 0 ? selection = selectionMax : selection--;
+
+				reDraw = true;
+
+				InputCoolDown.StartNewTimer(0.2);
+			}
+		}
+		else if (GetAsyncKeyState('S'))
+		{
+			if (InputCoolDown.Update() == true)
+			{
+				selection == selectionMax ? selection = 0 : selection++;
+
+				reDraw = true;
+
+				InputCoolDown.StartNewTimer(0.2);
+			}
+		}
+
+		if (GetAsyncKeyState('A'))
+		{
+			if (InputCoolDown.Update() == true)
+			{
+				switch (selection)
+				{
+				case 0:
+					max_x == 0 ? max_x = 0 : max_x--; break;
+				case 1:
+					max_y == 0 ? max_y = 0 : max_y--; break;
+				case 2:
+					offset_x == 0 ? offset_x = 0 : offset_x--; break;
+				case 3:
+					offset_y == 0 ? offset_y = 0 : offset_y--; break;
+				}
+				InputCoolDown.StartNewTimer(0.2);
+				reDraw = true;
+			}
+		}
+		else if (GetAsyncKeyState('D'))
+		{
+			if (InputCoolDown.Update() == true)
+			{
+				switch (selection)
+				{
+				case 0:
+					max_x == 500 ? max_x = 0 : max_x++; break;
+				case 1:
+					max_y == 500 ? max_y = 0 : max_y++; break;
+				case 2:
+					offset_x == 500 ? offset_x = 0 : offset_x++; break;
+				case 3:
+					offset_y == 500 ? offset_y = 0 : offset_y++; break;
+				default:
+					break;
+				}
+				InputCoolDown.StartNewTimer(0.2);
+				reDraw = true;
+			}
+		}
+		else if (GetAsyncKeyState(VK_RETURN))
+		{
+			if (selection==4)
+			{
+				exit = true;
+				Game::display.setSizeX(max_x);
+				Game::display.setSizeY(max_y);
+				Game::display.setOffSetPositionX(offset_x);
+				Game::display.setOffSetPositionY(offset_y);
+				reDraw = false;
+				clearScreen(5, 25);
+			}
+		}
+
+		if (reDraw == true)
+		{
+			std::ostringstream max_x_str;
+			std::ostringstream max_y_str;
+			std::ostringstream offset_y_str;
+			std::ostringstream offset_x_str;
+
+			max_x_str << max_x;
+			max_y_str << max_y;
+			offset_x_str << offset_x;
+			offset_y_str << offset_y;
+
+			reDraw = false;
+
+			clearScreen(5, 25);
+			CursorPos(0, 0);
+
+			switch (selection)
+			{
+			case 0:
+				cout << "1.Size X <" << max_x_str.str() << "> <-" << endl
+					<< "2.Size Y <" << max_y_str.str() << ">" << endl
+					<< "3.Offset X <" << offset_x_str.str() << ">" << endl
+					<< "4.Offset Y <" << offset_y_str.str() << ">" << endl
+					<< "5.Return"; break;
+			case 1:
+				cout << "1.Size X <" << max_x_str.str() << ">" << endl
+					<< "2.Size Y <" << max_y_str.str() << "> <-" << endl
+					<< "3.Offset X <" << offset_x_str.str() << ">" << endl
+					<< "4.Offset Y <" << offset_y_str.str() << ">" << endl
+					<< "5.Return"; break;
+			case 2:
+				cout << "1.Size X <" << max_x_str.str() << ">" << endl
+					<< "2.Size Y <" << max_y_str.str() << ">" << endl
+					<< "3.Offset X <" << offset_x_str.str() << "> <-" << endl
+					<< "4.Offset Y <" << offset_y_str.str() << ">" << endl
+					<< "5.Return"; break;
+			case 3:
+				cout << "1.Size X <" << max_x_str.str() << ">" << endl
+					<< "2.Size Y <" << max_y_str.str() << ">" << endl
+					<< "3.Offset X <" << offset_x_str.str() << ">" << endl
+					<< "4.Offset Y <" << offset_y_str.str() << "> <-" << endl
+					<< "5.Return"; break;
+			case 4:
+				cout << "1.Size X <" << max_x_str.str() << ">" << endl
+					<< "2.Size Y <" << max_y_str.str() << ">" << endl
+					<< "3.Offset X <" << offset_x_str.str() << ">" << endl
+					<< "4.Offset Y <" << offset_y_str.str() << ">" << endl
+					<< "5.Return <-"; break;
+			}
+		}
+
+	}
 }
 
 void appleUpdate();
@@ -143,8 +287,8 @@ void spawnMultipleApples(int spawn_amount)
 {
     for(int x=0;x<spawn_amount;x++)
     {
-        applePosition.x=(rand() % (Game::display.GetMaxSizeX()+1))+Game::display.getStartPositionX();
-        applePosition.y=(rand() % (Game::display.GetMaxSizeY()+1))+Game::display.getStartPositionY();
+        applePosition.x=(rand() % (Game::display.GetMaxSizeX()+1))+Game::display.getOffSetPositionX();
+        applePosition.y=(rand() % (Game::display.GetMaxSizeY()+1))+Game::display.getOffSetPositionY();
         appleUpdate();
     }
 }
@@ -174,12 +318,13 @@ void gameLoop()
     return;
 }
 
-void startGame()
+void mainMenu()
 {
     Timer InputCoolDown;
 	int selection = 0;
 	int selectionMax = 2;
-	int prevSelection = 10;
+	int prevSelection = selectionMax + 1;
+	bool reDraw = false;
     CursorPos(0,0);
     while(true)
     {
@@ -207,10 +352,11 @@ void startGame()
             {
                 if(selection==0)
                 {
-                    clearScreen(3,10);
+                    clearScreen(3,20);
                     gameLoop();
-                    clearScreen();
+                    clearScreen(Game::display.GetMaxSizeY()+Game::display.getOffSetPositionY()+2, Game::display.GetMaxSizeX()+Game::display.getOffSetPositionX()+2); // Adds the max width, plus offset, +2 for the borders.
                     CursorPos(0,0);
+					reDraw = true;
 				} else if (selection==1)
                 {
 					selectionChangeMapSize();
@@ -222,10 +368,11 @@ void startGame()
             }
         }
 
-		if (prevSelection != selection)
+		if (prevSelection != selection || reDraw==true)
 		{
 			clearScreen(3, 20);
 			CursorPos(0, 0);
+			reDraw = false;
 			switch (selection)
 			{
 			case 0:
@@ -289,7 +436,7 @@ int main()
 
     CursorPos((Game::display.GetMaxSizeX()+Game::display.getStartPositionX())+2, 0);
 
-    startGame();
+    mainMenu();
 
     return 0;
 }
