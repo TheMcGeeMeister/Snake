@@ -125,6 +125,11 @@ bool isExit()
     }
 }
 
+void selectionChangeMapSize()
+{
+	
+}
+
 void appleUpdate();
 
 void spawnApple()
@@ -172,52 +177,73 @@ void gameLoop()
 void startGame()
 {
     Timer InputCoolDown;
-    int selection=0;
+	int selection = 0;
+	int selectionMax = 2;
     CursorPos(0,0);
-    cout<<"1.Start Game<-"<<endl
-        <<"2.Exit Game"<<endl;
-    while(true==true)
+    while(true)
     {
-        if(GetAsyncKeyState('W') || GetAsyncKeyState('S'))
+        if(GetAsyncKeyState('W'))
         {
             if(InputCoolDown.Update()==true)
             {
-                if(selection==0)
-                {
-                    selection=1;
-                    clearScreen(2, 15);
-                    CursorPos(0,0);
-                    cout<<"1.Start Game"<<endl
-                        <<"2.Exit Game<-"<<endl;
-                }else
-                {
-                    selection=0;
-                    clearScreen(2, 15);
-                    CursorPos(0,0);
-                    cout<<"1.Start Game<-"<<endl
-                        <<"2.Exit Game"<<endl;
-                }
+				selection == 0 ? selection = 2 : selection--;
+
                 InputCoolDown.StartNewTimer(0.2);
             }
-        }else if(GetAsyncKeyState(VK_RETURN))
+		}
+		else if(GetAsyncKeyState('S'))
+		{
+			if (InputCoolDown.Update() == true)
+			{
+				selection == selectionMax ? selection = 0 : selection++;
+
+				InputCoolDown.StartNewTimer(0.2);
+			}
+		}
+		else if (GetAsyncKeyState(VK_RETURN))
         {
             if(InputCoolDown.Update()==true)
             {
                 if(selection==0)
                 {
-                    clearScreen();
+                    clearScreen(3,10);
                     gameLoop();
                     clearScreen();
                     CursorPos(0,0);
-                    cout<<"1.Start Game<-"<<endl
-                        <<"2.Exit Game"<<endl;
-                }else
+				} else if (selection==1)
                 {
-                    return;
-                }
+					selectionChangeMapSize();
+				}
+				else
+					return;
+
                 InputCoolDown.StartNewTimer(0.2);
             }
         }
+
+		clearScreen(3, 20);
+		CursorPos(0, 0);
+
+		switch (selection)
+		{
+		case 0:
+			cout << "1.Start Game <-" << endl
+				<< "2.Settings" << endl
+				<< "3.Exit";
+			break;
+		case 1:
+			cout << "1.Start Game" << endl
+				<< "2.Settings <-" << endl
+				<< "3.Exit";
+			break;
+		case 2:
+			cout << "1.Start Game" << endl
+				<< "2.Settings" << endl
+				<< "3.Exit <-";
+			break;
+		default:
+			return;
+		}
 
         Sleep(1);
     }
