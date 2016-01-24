@@ -62,8 +62,6 @@ class Player
         Position& GetPlayerPosRef();
         Direction GetPlayerDirection();
 
-
-
         Timer MovementCoolDown;
     protected:
     private:
