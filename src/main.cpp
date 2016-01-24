@@ -445,7 +445,7 @@ int main()
 
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	GetConsoleCursorInfo(h, &cursorInfo);
+	SetConsoleCursorInfo(h, &cursorInfo);
 
     srand(time(NULL));
 
