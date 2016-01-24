@@ -126,7 +126,7 @@ bool isExit()
     }
 }
 
-void selectionChangeMapSize()
+void settingsMenu()
 {
 	Timer InputCoolDown;
 	int selection = 0;
@@ -176,9 +176,9 @@ void selectionChangeMapSize()
 				case 1:
 					max_y == 0 ? max_y = 0 : max_y--; break;
 				case 2:
-					offset_x == 0 ? offset_x = 0 : offset_x--; break;
+					offset_x == 1 ? offset_x = 1 : offset_x--; break;
 				case 3:
-					offset_y == 0 ? offset_y = 0 : offset_y--; break;
+					offset_y == 1 ? offset_y = 1 : offset_y--; break;
 				}
 				InputCoolDown.StartNewTimer(0.2);
 				reDraw = true;
@@ -300,7 +300,7 @@ void appleUpdate()
 
 void gameLoop()
 {
-    Position pos(2,2);
+    Position pos(Game::display.getOffSetPositionY()+1, Game::display.getOffSetPositionX());
     Game::player.SetPlayerPos(pos);
     spawnApple();
     Game::display.clearDisplay();
@@ -323,16 +323,17 @@ void mainMenu()
     Timer InputCoolDown;
 	int selection = 0;
 	int selectionMax = 2;
-	int prevSelection = selectionMax + 1;
-	bool reDraw = false;
+	bool reDraw = true;
     CursorPos(0,0);
     while(true)
     {
         if(GetAsyncKeyState('W'))
         {
-            if(InputCoolDown.Update()==true)
+            if(InputCoolDown.Update() == true)
             {
 				selection == 0 ? selection = 2 : selection--;
+
+				reDraw = true;
 
                 InputCoolDown.StartNewTimer(0.2);
             }
@@ -342,6 +343,8 @@ void mainMenu()
 			if (InputCoolDown.Update() == true)
 			{
 				selection == selectionMax ? selection = 0 : selection++;
+
+				reDraw = true;
 
 				InputCoolDown.StartNewTimer(0.2);
 			}
@@ -359,7 +362,8 @@ void mainMenu()
 					reDraw = true;
 				} else if (selection==1)
                 {
-					selectionChangeMapSize();
+					settingsMenu();
+					reDraw = true;
 				}
 				else
 					return;
@@ -368,7 +372,7 @@ void mainMenu()
             }
         }
 
-		if (prevSelection != selection || reDraw==true)
+		if (reDraw==true)
 		{
 			clearScreen(3, 20);
 			CursorPos(0, 0);
@@ -379,19 +383,16 @@ void mainMenu()
 				cout << "1.Start Game <-" << endl
 					<< "2.Settings" << endl
 					<< "3.Exit";
-				prevSelection = 0;
 				break;
 			case 1:
 				cout << "1.Start Game" << endl
 					<< "2.Settings <-" << endl
 					<< "3.Exit";
-				prevSelection = 1;
 				break;
 			case 2:
 				cout << "1.Start Game" << endl
 					<< "2.Settings" << endl
 					<< "3.Exit <-";
-				prevSelection = 2;
 				break;
 			default:
 				return;

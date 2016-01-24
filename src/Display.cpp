@@ -187,7 +187,7 @@ int Display::getStartPositionY()
 
 unsigned int Display::getOffSetPositionX()
 {
-	return offset_y_;
+	return offset_x_;
 }
 
 unsigned int Display::getOffSetPositionY()
