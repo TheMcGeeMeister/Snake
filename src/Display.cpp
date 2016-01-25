@@ -1,5 +1,8 @@
 #include "Display.h"
 
+
+extern void clearScreen(unsigned int lines, unsigned int width);
+
 Display::Display(unsigned int size_y, unsigned int size_x)
 {
     nlength=1;
@@ -163,6 +166,7 @@ void Display::clearDisplay()
 {
     GameMap.clear();
     MapChangesBuffer.clear();
+	clearScreen(size_y + offset_y_+2, size_x + offset_x_+2);
 }
 
 int Display::GetMaxSizeY()

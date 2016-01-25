@@ -3,6 +3,7 @@
 #include <random>
 #include <conio.h>
 #include <thread>
+#include <Menu.h>
 #include <Game.h>
 #include <sstream>
 
@@ -323,13 +324,14 @@ void gameLoop()
         Sleep(1);
     }
     Game::player.resetTail();
+	Game::display.clearDisplay();
     playerAteSelf=false;
     return;
 }
 
 void mainMenu()
 {
-    Timer InputCoolDown;
+    /*Timer InputCoolDown;
 	int selection = 0;
 	int selectionMax = 2;
 	bool reDraw = true;
@@ -340,7 +342,7 @@ void mainMenu()
         {
             if(InputCoolDown.Update() == true)
             {
-				selection == 0 ? selection = 2 : selection--;
+				selection == 0 ? selection = selectionMax : selection--;
 
 				reDraw = true;
 
@@ -406,9 +408,36 @@ void mainMenu()
 			default:
 				return;
 			}
-		}
+		}*/
 
-        Sleep(1);
+	Menu menu;
+	menu.addSelection("Start Game");
+	menu.addSelection("Settings");
+	menu.addSelection("Exit");
+		
+	while (true)
+	{
+		menu.update();
+		if (menu.selectionActivated())
+		{
+			switch (menu.getActiveSelection())
+			{
+			case 1:
+				menu.setHiddenState(true);
+				gameLoop();
+				menu.setHiddenState(false);
+				break;
+			case 2:
+				menu.setHiddenState(true);
+				settingsMenu();
+				menu.setHiddenState(false);
+				menu.InputTimer.StartNewTimer(0.2);
+				break;
+			case 3:
+				return;
+				break;
+			}
+		}
     }
 }
 

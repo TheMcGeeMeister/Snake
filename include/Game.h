@@ -8,4 +8,8 @@ namespace Game
 	extern Display display;
 }
 
+void CursorPos(short int y, short int x);
+void FillLine(int line, int width);
+void clearScreen(unsigned int lines, unsigned int width);
+
 #endif
