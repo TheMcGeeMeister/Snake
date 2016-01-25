@@ -331,85 +331,6 @@ void gameLoop()
 
 void mainMenu()
 {
-    /*Timer InputCoolDown;
-	int selection = 0;
-	int selectionMax = 2;
-	bool reDraw = true;
-    CursorPos(0,0);
-    while(true)
-    {
-        if(GetAsyncKeyState('W'))
-        {
-            if(InputCoolDown.Update() == true)
-            {
-				selection == 0 ? selection = selectionMax : selection--;
-
-				reDraw = true;
-
-                InputCoolDown.StartNewTimer(0.2);
-            }
-		}
-		else if(GetAsyncKeyState('S'))
-		{
-			if (InputCoolDown.Update() == true)
-			{
-				selection == selectionMax ? selection = 0 : selection++;
-
-				reDraw = true;
-
-				InputCoolDown.StartNewTimer(0.2);
-			}
-		}
-		else if (GetAsyncKeyState(VK_RETURN))
-        {
-            if(InputCoolDown.Update()==true)
-            {
-                if(selection==0)
-                {
-                    clearScreen(3,20);
-                    gameLoop();
-                    clearScreen((unsigned int)Game::display.GetMaxSizeY()+Game::display.getOffSetPositionY()+2, (unsigned int)Game::display.GetMaxSizeX()+Game::display.getOffSetPositionX()+2); // Adds the max width, plus offset, +2 for the borders.
-                    CursorPos(0,0);
-					reDraw = true;
-				} else if (selection==1)
-                {
-					settingsMenu();
-					reDraw = true;
-				}
-				else
-					return;
-
-                InputCoolDown.StartNewTimer(0.2);
-            }
-        }
-
-		if (reDraw==true)
-		{
-			clearScreen(3, 20);
-			CursorPos(0, 0);
-			reDraw = false;
-			switch (selection)
-			{
-			case 0:
-				cout << "1.Start Game <-" << endl
-					<< "2.Settings" << endl
-					<< "3.Exit";
-				break;
-			case 1:
-				cout << "1.Start Game" << endl
-					<< "2.Settings <-" << endl
-					<< "3.Exit";
-				break;
-			case 2:
-				cout << "1.Start Game" << endl
-					<< "2.Settings" << endl
-					<< "3.Exit <-";
-				break;
-			default:
-				return;
-			}
-		}*/
-
 	Menu menu;
 	menu.addSelection("Start Game");
 	menu.addSelection("Settings");
@@ -441,7 +362,7 @@ void mainMenu()
     }
 }
 
-void clearScreen() // Not reccomended takes a lot of time to clear this much
+void clearScreen() // Not reccomended takes a lot of time to clear this much Edit: Maybe not as long, changed it to use FillLine() but hasn't been tested for efficiency
 {
     Position pos;
     for(int y=0;y<=300;y++)
@@ -458,7 +379,7 @@ void clearScreen(unsigned int lines, unsigned int width) // Pick the amount of l
     {
         pos.y=y;
 		FillLine(y, width);
-        /*for(int x=0;x<=width;x++) FillLine may actually be more efficent
+        /*for(int x=0;x<=width;x++) FillLine is more efficent
         {
             pos.x=x;
             SetPos(pos, ' ');
@@ -476,7 +397,7 @@ int main()
 
 	SetConsoleCursorInfo(h, &cursorInfo);
 
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
 
     CursorPos((Game::display.GetMaxSizeX()+Game::display.getStartPositionX())+2, 0);
 
