@@ -225,19 +225,19 @@ bool Player::isCollision(Direction direction)
         case Up:
             NewPosition.y--;
             graphicAtNewPos=Game::display.GetPos(pos);
-            if(graphicAtNewPos==snakeGraphic_){return true;}{return false;}
+			return (graphicAtNewPos == snakeGraphic_);
         case Down:
             NewPosition.y++;
             graphicAtNewPos=Game::display.GetPos(pos);
-            if(graphicAtNewPos==snakeGraphic_){return true;}{return false;}
+			return(graphicAtNewPos == snakeGraphic_);
         case Left:
             NewPosition.x--;
             graphicAtNewPos=Game::display.GetPos(pos);
-            if(graphicAtNewPos==snakeGraphic_){return true;}{return false;}
+			return (graphicAtNewPos == snakeGraphic_);
         case Right:
             NewPosition.x++;
             graphicAtNewPos=Game::display.GetPos(pos);
-            if(graphicAtNewPos==snakeGraphic_){return true;}{return false;}
+			return (graphicAtNewPos == snakeGraphic_);
         default:
             return true;
     }
@@ -251,20 +251,19 @@ bool Player::CanMove()
     {
         return false;
     }
+	if (isCollision(direct))
+	{
+		gameOver();
+		return false;
+	}
     switch(direct)
     {
-        case Up: newPos.y--; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Down: newPos.y++; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Left: newPos.x--; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Right: newPos.x++; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
+        case Up: newPos.y--; break;
+        case Down: newPos.y++; break;
+        case Left: newPos.x--; break;
+        case Right: newPos.x++; break;
     }
-    if(isCollision(direct))
-
-    {
-        gameOver();
-        return false;
-    }
-    return true;
+	return Game::display.isValidPosition(newPos);
 }
 
 bool Player::CanMoveCertainDirection(Direction direct)
@@ -276,24 +275,61 @@ bool Player::CanMoveCertainDirection(Direction direct)
     }
     switch(direct)
     {
-        case Up: newPos.y--; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Down: newPos.y++; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Left: newPos.x--; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
-        case Right: newPos.x++; if(Game::display.isValidPosition(newPos)){return true;}else{return false;} break;
+        case Up: newPos.y--; break;
+        case Down: newPos.y++; break;
+        case Left: newPos.x--; break;
+        case Right: newPos.x++; break;
     }
-    return true;
+	return Game::display.isValidPosition(newPos);
+}
+
+bool Player::isValidDirectChange(Direction direct)
+{
+	switch (direct)
+	{
+	case Up:
+		return !(this->direct == Down || this->direct == Up);
+	case Down:
+		return !(this->direct == Up || this->direct == Down);
+	case Left:
+		return !(this->direct == Right || this->direct == Left);
+	case Right:
+		return !(this->direct == Left || this->direct == Right);
+	}
+	return true;
+}
+
+bool Player::isValidPositionInDirect(Direction direct)
+{
+	Position newPos = pos;
+	if (MovementCoolDown.Update() == false)
+	{
+		return false;
+	}
+	switch (direct)
+	{
+	case Up: newPos.y--; break;
+	case Down: newPos.y++; break;
+	case Left: newPos.x--; break;
+	case Right: newPos.x++; break;
+	}
+	return Game::display.isValidPosition(newPos);
 }
 
 bool Player::CanChangeDirect(Direction direct)
 {
-    switch(direct)
-    {
-        case Up:if(this->direct==Down || this->direct==Up){return false;}else{return true;}
-        case Down:if(this->direct==Up || this->direct==Down){return false;}else{return true;}
-        case Left:if(this->direct==Right || this->direct==Left){return false;}else{return true;}
-        case Right:if(this->direct==Left || this->direct==Right){return false;}else{return true;}
-    }
-    return true;
+	switch (direct)
+	{
+	case Up:
+		return !(this->direct == Down || this->direct == Up);
+	case Down:
+		return !(this->direct == Up || this->direct == Down);
+	case Left:
+		return !(this->direct == Right || this->direct == Left);
+	case Right:
+		return !(this->direct == Left || this->direct == Right);
+	}
+	return true;
 }
 
 int& Player::GetPosXRef()

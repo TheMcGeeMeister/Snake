@@ -76,7 +76,7 @@ void Logic()
 	{
 		if (GetAsyncKeyState('W'))
 		{
-			if (Game::player.CanChangeDirect(Up) == true && Game::player.CanMoveCertainDirection(Up))
+			if (Game::player.isValidDirectChange(Up) == true && Game::player.isValidPositionInDirect(Up))
 			{
 				Game::player.SetPlayerDirect(Up);
 				Game::player.AddTurnPoint(Up);
@@ -85,7 +85,7 @@ void Logic()
 		}
 		else if (GetAsyncKeyState('S'))
 		{
-			if (Game::player.CanChangeDirect(Down) == true && Game::player.CanMoveCertainDirection(Down))
+			if (Game::player.isValidDirectChange(Down) == true && Game::player.isValidPositionInDirect(Down))
 			{
 				Game::player.SetPlayerDirect(Down);
 				Game::player.AddTurnPoint(Down);
@@ -94,7 +94,7 @@ void Logic()
 		}
 		else if (GetAsyncKeyState('A'))
 		{
-			if (Game::player.CanChangeDirect(Left) == true && Game::player.CanMoveCertainDirection(Left))
+			if (Game::player.isValidDirectChange(Left) == true && Game::player.isValidPositionInDirect(Left))
 			{
 				Game::player.SetPlayerDirect(Left);
 				Game::player.AddTurnPoint(Left);
@@ -103,7 +103,7 @@ void Logic()
 		}
 		else if (GetAsyncKeyState('D'))
 		{
-			if (Game::player.CanChangeDirect(Right) == true && Game::player.CanMoveCertainDirection(Right))
+			if (Game::player.isValidDirectChange(Right) == true && Game::player.isValidPositionInDirect(Right))
 			{
 				Game::player.SetPlayerDirect(Right);
 				Game::player.AddTurnPoint(Right);

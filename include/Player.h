@@ -49,6 +49,8 @@ class Player
         bool CanMove();
         bool CanMoveCertainDirection(Direction direct);
         bool CanChangeDirect(Direction direct);
+		bool isValidPositionInDirect(Direction direct);
+		bool isValidDirectChange(Direction direct);
         bool isCollision(Direction);
         int GetTailAmount();
         int GetPosX();
