@@ -15,7 +15,7 @@ class Position
         int x;
         int y;
         void operator=(const Position&);
-        bool operator==(const Position&) const;
+		bool operator==(const Position&);
         bool operator<(const Position&) const;
         pair<int, int> operator()();
         void operator()(int, int);

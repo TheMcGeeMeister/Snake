@@ -149,6 +149,8 @@ void Display::Update()
             const char graphic=GameMap[CurrentPosition()];
             pos.X=CurrentPosition.x;
             pos.Y=CurrentPosition.y;
+			ReadConsoleOutputCharacter(h, &readConsole_, nlength, pos, &output);
+			if (readConsole_ == graphic) continue;
             WriteConsoleOutputCharacter(h, &graphic, nlength, pos, &output);
         }else
         {
@@ -156,6 +158,8 @@ void Display::Update()
             CurrentPosition=iter->GetChangePos();
             pos.X=CurrentPosition.x;
             pos.Y=CurrentPosition.y;
+			ReadConsoleOutputAttribute(h, &readAttribute_, nlength, pos, &output);
+			if (readAttribute_ == attribute) continue;
             WriteConsoleOutputAttribute(h, &attribute, nlength, pos, &output);
         }
     }
@@ -202,6 +206,14 @@ unsigned int Display::getOffSetPositionY()
 char Display::GetPos(Position position)
 {
     return GameMap[position()];
+}
+
+Position Display::getRandomValidPosition()
+{
+	Position newPos;
+	newPos.y = rand() % size_x + offset_x_ + 1;
+	newPos.x = rand() % size_y + offset_y_ + 1;
+	return newPos;
 }
 
 

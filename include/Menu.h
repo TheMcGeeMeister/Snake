@@ -18,9 +18,11 @@ class Menu
 		void addSelection(string text);
 		void setMenuFocus(bool isFocused);
 		void setHiddenState(bool isHidden);
+		void setSelectionColor(string selection, WORD color);
 
 		unsigned int getActiveSelection();
 
+		
 		bool selectionActivated();
 		bool isMenuInFocus();
 		bool isHidden();
@@ -34,11 +36,13 @@ class Menu
     private:
 		unsigned int size_x_, size_y_, offset_x_, offset_y_, selected_, selectionAmount_;
 		map<unsigned int, string> selections_;
+		map<string, WORD> selections_color_;
 		bool isMenuFocused_;
 		bool reDraw;
 		bool selectionActivated_;
 		bool isHidden_;
 		Timer InputCoolDown;
+		HANDLE h;
 
 };
 

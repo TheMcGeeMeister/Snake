@@ -12,6 +12,7 @@ class display_change
     public:
         void SetChange(Position, char);
         void SetChangeColor(Position, DWORD);
+
         Position GetChangePos();
         char GetChangeGraphic();
         DWORD GetChangeAttribute();
@@ -51,6 +52,7 @@ class Display
 		unsigned int getOffSetPositionX();
 		unsigned int getOffSetPositionY();
         char GetPos(Position);
+		Position getRandomValidPosition();
     private:
         map<pair<int,int>, char> GameMap;
         vector<display_change> MapChangesBuffer;
@@ -59,7 +61,9 @@ class Display
         unsigned int offset_y_, offset_x_;
         DWORD nlength;
         DWORD output;
+		WORD readAttribute_;
         COORD pos;
+		char readConsole_;
 };
 
 #endif // DISPLAY_H

@@ -19,6 +19,7 @@ Menu::Menu()
 	selectionActivated_ = false;
 	selectionAmount_ = 0;
 	selected_ = 0;
+	h = GetStdHandle(STD_OUTPUT_HANDLE);
 }
 
 Menu::Menu(unsigned int size_x, unsigned int size_y)
@@ -33,6 +34,7 @@ Menu::Menu(unsigned int size_x, unsigned int size_y)
 	selectionActivated_ = false;
 	selectionAmount_ = 0;
 	selected_ = 0;
+	h = GetStdHandle(STD_OUTPUT_HANDLE);
 }
 
 Menu::Menu(unsigned int size_x, unsigned int size_y, unsigned int offset_x, unsigned int offset_y)
@@ -47,6 +49,7 @@ Menu::Menu(unsigned int size_x, unsigned int size_y, unsigned int offset_x, unsi
 	selectionActivated_ = false;
 	selectionAmount_ = 0;
 	selected_ = 0;
+	h = GetStdHandle(STD_OUTPUT_HANDLE);
 }
 
 void Menu::addSelection(string text)
@@ -76,6 +79,11 @@ void Menu::setHiddenState(bool isHidden)
 	{
 		reDraw = true;
 	}
+}
+
+void Menu::setSelectionColor(string selection, WORD color)
+{
+	selections_color_[selection] = color;
 }
 
 unsigned int Menu::getActiveSelection()

@@ -68,7 +68,7 @@ void Position::operator=(const Position& pos)
     x=pos.x;
 }
 
-bool Position::operator==(const Position& pos) const
+bool Position::operator==(const Position& pos)
 {
     if(pos.x==x && pos.y==y)
     {

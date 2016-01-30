@@ -80,7 +80,6 @@ void Logic()
 			if (Game::player.isValidDirectChange(Up) == true && Game::player.isValidPositionInDirect(Up))
 			{
 				Game::player.SetPlayerDirect(Up);
-				Game::player.AddTurnPoint(Up);
 				InputCoolDown.StartNewTimer(0.05);
 			}
 		}
@@ -89,7 +88,6 @@ void Logic()
 			if (Game::player.isValidDirectChange(Down) == true && Game::player.isValidPositionInDirect(Down))
 			{
 				Game::player.SetPlayerDirect(Down);
-				Game::player.AddTurnPoint(Down);
 				InputCoolDown.StartNewTimer(0.05);
 			}
 		}
@@ -98,7 +96,6 @@ void Logic()
 			if (Game::player.isValidDirectChange(Left) == true && Game::player.isValidPositionInDirect(Left))
 			{
 				Game::player.SetPlayerDirect(Left);
-				Game::player.AddTurnPoint(Left);
 				InputCoolDown.StartNewTimer(0.05);
 			}
 		}
@@ -107,7 +104,6 @@ void Logic()
 			if (Game::player.isValidDirectChange(Right) == true && Game::player.isValidPositionInDirect(Right))
 			{
 				Game::player.SetPlayerDirect(Right);
-				Game::player.AddTurnPoint(Right);
 				InputCoolDown.StartNewTimer(0.05);
 			}
 		}
@@ -140,12 +136,13 @@ void settingsMenu()
 {
 	Timer InputCoolDown;
 	int selection = 0;
-	int selectionMax = 4;
+	int selectionMax = 5;
 
 	int max_y = Game::display.GetMaxSizeY();
 	int max_x = Game::display.GetMaxSizeX();
 	int offset_y = Game::display.getOffSetPositionY();
 	int offset_x = Game::display.getOffSetPositionX();
+	double playerSpeed = Game::player.getMovementCooldown();
 
 	bool exit = false;
 	bool reDraw = true;
@@ -189,6 +186,8 @@ void settingsMenu()
 					offset_x == 1 ? offset_x = 1 : offset_x--; break;
 				case 3:
 					offset_y == 1 ? offset_y = 1 : offset_y--; break;
+				case 4:
+					playerSpeed < 0.001 ? playerSpeed = 0.04 : playerSpeed-=0.001; break;
 				}
 				InputCoolDown.StartNewTimer(0.2);
 				reDraw = true;
@@ -208,6 +207,36 @@ void settingsMenu()
 					offset_x == 500 ? offset_x = 0 : offset_x++; break;
 				case 3:
 					offset_y == 500 ? offset_y = 0 : offset_y++; break;
+				case 4:
+					playerSpeed == 1 ? playerSpeed = 0.04 : playerSpeed+=0.001; break;
+				default:
+					break;
+				}
+				InputCoolDown.StartNewTimer(0.2);
+				reDraw = true;
+			}
+		}
+		else if (GetAsyncKeyState('F'))
+		{
+			if (InputCoolDown.Update() == true)
+			{
+				switch (selection)
+				{
+				case 0:
+					max_x == 500 ? max_x = 0 : max_x += 10;
+					if (max_x > 500) max_x -= 500; break;
+				case 1:
+					max_y == 500 ? max_y = 0 : max_y+=10;
+					if (max_y > 500) max_y -= 500; break;
+				case 2:
+					offset_x == 500 ? offset_x = 0 : offset_x+=10;
+					if (offset_x > 500) offset_x -= 500; break;
+				case 3:
+					offset_y == 500 ? offset_y = 0 : offset_y+=10;
+					if (offset_y > 500) offset_y -= 500; break;
+				case 4:
+					playerSpeed == 1 ? playerSpeed = 0.04 : playerSpeed += 0.01;
+					if (playerSpeed > 1) playerSpeed -= 0.96; break;
 				default:
 					break;
 				}
@@ -217,15 +246,16 @@ void settingsMenu()
 		}
 		else if (GetAsyncKeyState(VK_RETURN))
 		{
-			if (selection==4)
+			if (selection==selectionMax)
 			{
 				exit = true;
 				Game::display.setSizeX(max_x);
 				Game::display.setSizeY(max_y);
 				Game::display.setOffSetPositionX(offset_x);
 				Game::display.setOffSetPositionY(offset_y);
+				Game::player.setMovementCooldown(playerSpeed);
 				reDraw = false;
-				clearScreen(5, 25);
+				clearScreen(5, 50);
 			}
 		}
 
@@ -235,15 +265,17 @@ void settingsMenu()
 			std::ostringstream max_y_str;
 			std::ostringstream offset_y_str;
 			std::ostringstream offset_x_str;
+			std::ostringstream playerSpeed_str;
 
 			max_x_str << max_x;
 			max_y_str << max_y;
 			offset_x_str << offset_x;
 			offset_y_str << offset_y;
+			playerSpeed_str << playerSpeed;
 
 			reDraw = false;
 
-			clearScreen(5, 25);
+			clearScreen(5, 50);
 			CursorPos(0, 0);
 
 			switch (selection)
@@ -253,31 +285,43 @@ void settingsMenu()
 					<< "2.Size Y <" << max_y_str.str() << ">" << endl
 					<< "3.Offset X <" << offset_x_str.str() << ">" << endl
 					<< "4.Offset Y <" << offset_y_str.str() << ">" << endl
-					<< "5.Return"; break;
+					<< "5.Player Speed Timer <" << playerSpeed_str.str() << "%>" << endl
+					<< "6.Return"; break;
 			case 1:
 				cout << "1.Size X <" << max_x_str.str() << ">" << endl
 					<< "2.Size Y <" << max_y_str.str() << "> <-" << endl
 					<< "3.Offset X <" << offset_x_str.str() << ">" << endl
 					<< "4.Offset Y <" << offset_y_str.str() << ">" << endl
-					<< "5.Return"; break;
+					<< "5.Player Speed Timer <" << playerSpeed_str.str() << "%>" << endl
+					<< "6.Return"; break;
 			case 2:
 				cout << "1.Size X <" << max_x_str.str() << ">" << endl
 					<< "2.Size Y <" << max_y_str.str() << ">" << endl
 					<< "3.Offset X <" << offset_x_str.str() << "> <-" << endl
 					<< "4.Offset Y <" << offset_y_str.str() << ">" << endl
-					<< "5.Return"; break;
+					<< "5.Player Speed Timer <" << playerSpeed_str.str() << "%>" << endl
+					<< "6.Return"; break;
 			case 3:
 				cout << "1.Size X <" << max_x_str.str() << ">" << endl
 					<< "2.Size Y <" << max_y_str.str() << ">" << endl
 					<< "3.Offset X <" << offset_x_str.str() << ">" << endl
 					<< "4.Offset Y <" << offset_y_str.str() << "> <-" << endl
-					<< "5.Return"; break;
+					<< "5.Player Speed Timer <" << playerSpeed_str.str() << "%>" << endl
+					<< "6.Return"; break;
 			case 4:
 				cout << "1.Size X <" << max_x_str.str() << ">" << endl
 					<< "2.Size Y <" << max_y_str.str() << ">" << endl
 					<< "3.Offset X <" << offset_x_str.str() << ">" << endl
 					<< "4.Offset Y <" << offset_y_str.str() << ">" << endl
-					<< "5.Return <-"; break;
+					<< "5.Player Speed Timer <" << playerSpeed_str.str() << "%> <-" << endl
+					<< "6.Return"; break;
+			case 5:
+				cout << "1.Size X <" << max_x_str.str() << ">" << endl
+					<< "2.Size Y <" << max_y_str.str() << ">" << endl
+					<< "3.Offset X <" << offset_x_str.str() << ">" << endl
+					<< "4.Offset Y <" << offset_y_str.str() << ">" << endl
+					<< "5.Player Speed Timer <" << playerSpeed_str.str() << "%>" << endl
+					<< "6.Return <-"; break;
 			}
 		}
 
@@ -310,8 +354,10 @@ void appleUpdate()
 
 void gameLoop()
 {
+	CursorPos(Game::display.GetMaxSizeY() + Game::display.getOffSetPositionY() + 2, Game::display.GetMaxSizeX() + Game::display.getOffSetPositionX() + 2);
     Position pos(Game::display.getOffSetPositionY()+1, Game::display.getOffSetPositionX()+1);
     Game::player.SetPlayerPos(pos);
+	Game::player.setDirect(Up);
     spawnApple();
     Game::display.clearDisplay();
     Game::display.DrawBorder();
@@ -321,7 +367,6 @@ void gameLoop()
         Game::player.Update();
         Game::display.Update();
         appleUpdate();
-        Sleep(1);
     }
     Game::player.resetTail();
 	Game::display.clearDisplay();

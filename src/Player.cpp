@@ -3,7 +3,10 @@
 Player::Player()
 {
     snakeGraphic_='S';
+	playerGraphic_ = 'A';
     movementCooldown_=0.04;
+	deltaT_ = 1;
+	ateApple = false;
 }
 
 Player::~Player()
@@ -125,14 +128,30 @@ void Player::AddTail()
 
 void Player::SetPlayerPos(Position pos)
 {
-	Game::display .SetPos(pos, ' ');
-    this->pos=pos;
-    Game::display.SetPos(pos, 'A');
+	//Game::display .SetPos(pos, ' ');
+    this->posGoal_=pos;
+	this->pos = pos;
+    //Game::display.SetPos(pos, 'A');
+}
+
+void Player::setPos(Position pos)
+{
+	//Game::display.SetPos(pos, ' ');
+	this->posGoal_ = pos;
+	this->pos = pos;
+	//Game::display.SetPos(pos, playerGraphic_);
 }
 
 void Player::SetPlayerDirect(Direction direct)
 {
     this->direct=direct;
+	AddTurnPoint(direct);
+}
+
+void Player::setDirect(Direction direct)
+{
+	this->direct = direct;
+	AddTurnPoint(direct);
 }
 
 void Player::SetSnakeGraphic(char _snakeGraphic)
@@ -140,10 +159,55 @@ void Player::SetSnakeGraphic(char _snakeGraphic)
     snakeGraphic_=_snakeGraphic;
 }
 
-void Player::SetMovementCooldown(double _i_cooldown)
+void Player::setPlayerGraphic(char playerGraphic)
 {
-    movementCooldown_=_i_cooldown;
+	playerGraphic_ = playerGraphic;
+}
+
+void Player::setMovementCooldown(double cooldown)
+{
+    movementCooldown_=cooldown;
     return;
+}
+
+void Player::setLerpDeltaT(int deltaT)
+{
+	deltaT_ = deltaT;
+	return;
+}
+
+void Player::approach()
+{
+	bool overDueX = false;
+	bool overDueY = false;
+	if (pos == posGoal_)
+		return;
+	else
+	{
+		Game::display.SetPos(pos, ' ');
+		if (pos.x != posGoal_.x)
+		{
+			pos.x > posGoal_.x ? (pos.x - deltaT_<posGoal_.x ? overDueX = true : overDueX = false) : (pos.x + deltaT_>posGoal_.x ? overDueX = true : overDueX = false);
+			pos.x > posGoal_.x ? pos.x-= deltaT_ : pos.x+= deltaT_;
+		}
+		if (pos.y != posGoal_.y)
+		{
+			pos.y > posGoal_.y ? (pos.y - deltaT_<posGoal_.y ? overDueY = true : overDueY = false) : (pos.y + deltaT_>posGoal_.y ? overDueY = true : overDueY = false);
+			pos.y > posGoal_.y ? pos.y -= deltaT_ : pos.y += deltaT_;
+		}
+		if (overDueX == true) pos.x = posGoal_.x;
+		if (overDueY == true) pos.y = posGoal_.y;
+	}
+	if (Game::display.GetPos(pos) == '@')
+	{
+		spawnApple();
+		ateApple = true;
+	}
+	else if (Game::display.GetPos(pos) == snakeGraphic_)
+	{
+		gameOver();
+	}
+	Game::display.SetPos(pos, playerGraphic_);
 }
 
 void Player::AddTurnPoint(Direction direct)
@@ -171,6 +235,7 @@ void Player::Update()
     }else
     {
         Move();
+		approach();
         vector<Tail>::iterator iter=tails.begin();
         vector<Tail>::iterator e=tails.end();
         for(;iter!=e;iter++)
@@ -194,8 +259,8 @@ void Player::resetTail()
 
 void Player::Move()
 {
-    char nothing=' ';
-	Game::display .SetPos(pos, nothing);
+    /*char nothing=' ';
+	Game::display.SetPos(pos, nothing);
     switch(direct)
     {
         case Up: pos.y--; MovementCoolDown.StartNewTimer(movementCooldown_*2); break;
@@ -213,7 +278,14 @@ void Player::Move()
         gameOver();
     }
     Game::display.SetPos(pos, 'A');
-    return;
+    return;*/
+	switch (direct)
+	{
+	case Up: posGoal_.y--; MovementCoolDown.StartNewTimer(movementCooldown_ * 2); break;
+	case Down: posGoal_.y++; MovementCoolDown.StartNewTimer(movementCooldown_ * 2); break;
+	case Left: posGoal_.x--; MovementCoolDown.StartNewTimer(movementCooldown_); break;
+	case Right: posGoal_.x++; MovementCoolDown.StartNewTimer(movementCooldown_); break;
+	}
 }
 
 bool Player::isCollision(Direction direction)
@@ -357,6 +429,26 @@ int Player::GetTailAmount()
     return tailAmount;
 }
 
+double Player::getMovementCooldown()
+{
+	return movementCooldown_;
+}
+
+double& Player::getMovementCooldownRef()
+{
+	return movementCooldown_;
+}
+
+char Player::getSnakeGraphic()
+{
+	return snakeGraphic_;
+}
+
+char Player::getPlayerGraphic()
+{
+	return playerGraphic_;
+}
+
 Position Player::GetPlayerPos()
 {
     return pos;
@@ -393,7 +485,7 @@ void Tail::SetTailDirect(Direction direct)
 
 void Tail::AddTurn(pair<Direction, Position> NewTurn)
 {
-    turns.push_back(NewTurn);
+	turns.push_back(NewTurn);
 }
 
 void Tail::Move()

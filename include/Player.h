@@ -11,6 +11,7 @@ using namespace std;
 extern void gameOver();
 extern void spawnApple();
 
+
 class Tail
 {
     public:
@@ -32,6 +33,8 @@ class Tail
         Position pos;
         Direction direct;
 };
+
+
 class Player
 {
     public:
@@ -39,8 +42,14 @@ class Player
         virtual ~Player();
         void SetPlayerPos(Position pos);
         void SetPlayerDirect(Direction direct);
+		void setPos(Position pos);
+		void setDirect(Direction direct);
         void SetSnakeGraphic(char);
-        void SetMovementCooldown(double);
+		void setPlayerGraphic(char);
+        void setMovementCooldown(double);
+		void setPosGoal(Position goal);
+		void setLerpDeltaT(int deltaT);
+		void approach();
         void AddTail();
         void AddTurnPoint(Direction direct);
         void Update();
@@ -57,9 +66,11 @@ class Player
         int GetPosY();
         int& GetPosXRef();
         int& GetPosYRef();
-        double GetMovementCooldown();
-        double& GetMovementCooldownRef();
+        double getMovementCooldown();
+        double& getMovementCooldownRef();
         char GetSnakeGraphic();
+		char getSnakeGraphic();
+		char getPlayerGraphic();
         Position GetPlayerPos();
         Position& GetPlayerPosRef();
         Direction GetPlayerDirection();
@@ -69,10 +80,13 @@ class Player
     private:
         int tailAmount;
         int amountAte;
+		int deltaT_;
         double movementCooldown_;
         bool ateApple;
         char snakeGraphic_;
+		char playerGraphic_;
         Position pos;
+		Position posGoal_;
         Direction direct;
         vector<Tail> tails;
 };
